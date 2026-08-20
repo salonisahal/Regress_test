@@ -9,6 +9,8 @@ const router = createRouter({
     { path: '/login', name: 'login', component: () => import('../views/LoginView.vue') },
     { path: '/signup', name: 'signup', component: () => import('../views/SignupView.vue') },
     { path: '/forgot-password', name: 'forgot-password', component: () => import('../views/ForgotPasswordView.vue') },
+    { path: '/project/:id', redirect: (to) => `/projects/${String(to.params.id)}` },
+    { path: '/task/:id', redirect: (to) => `/tasks/${String(to.params.id)}` },
     {
       path: '/',
       component: ShellLayout,
@@ -33,7 +35,16 @@ const router = createRouter({
 
 router.beforeEach((to) => {
   const auth = useAuthStore()
-  if (to.matched.some((record) => record.meta.requiresAuth) && !auth.isAuthenticated) return '/login'
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
+
+  if (requiresAuth && !auth.isAuthenticated) {
+    return { name: 'login', query: { redirect: to.fullPath } }
+  }
+
+  if (auth.isAuthenticated && ['login', 'signup', 'forgot-password'].includes(String(to.name))) {
+    return { name: 'dashboard' }
+  }
+
   return true
 })
 
