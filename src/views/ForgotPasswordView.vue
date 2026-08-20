@@ -1,0 +1,6 @@
+<script setup lang="ts">
+import { computed, reactive, ref } from 'vue'
+import { RouterLink } from 'vue-router'
+const form = reactive({ email: '' }); const submitted = ref(false); const isValid = computed(() => form.email.includes('@'))
+function onSubmit() { if (!isValid.value) return; submitted.value = true }
+</script><template><div class="grid min-h-screen place-items-center bg-primary-soft p-5"><div class="w-full max-w-md rounded-panel bg-surface p-9 shadow-xl"><RouterLink to="/login" class="text-sm font-semibold text-primary">← Back to sign in</RouterLink><h1 class="mt-6 text-2xl font-bold">Reset your password</h1><p class="mt-2 text-sm text-secondary">We’ll send a reset link to your work email.</p><form v-if="!submitted" class="mt-7" @submit.prevent="onSubmit"><label class="text-sm font-medium">Email<input v-model="form.email" type="email" class="mt-2 w-full rounded-lg border border-border px-3 py-3" /></label><button :disabled="!isValid" class="mt-5 w-full rounded-lg bg-primary py-3 font-semibold text-white disabled:opacity-50">Send reset link</button></form><p v-else class="mt-6 rounded-lg bg-success/10 p-4 text-sm text-success">Check your inbox for a reset link.</p></div></div></template>
